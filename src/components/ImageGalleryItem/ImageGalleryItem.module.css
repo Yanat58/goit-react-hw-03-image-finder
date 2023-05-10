@@ -1,0 +1,37 @@
+.item {
+  width: 380px;
+  margin-bottom: 15px;
+
+  border-radius: 15px;
+
+  overflow: hidden;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform var(--hover-animation);
+}
+
+.item:hover,
+.item:focus {
+  transform: scale(1.02);
+}
+
+.item:last-child {
+  margin-bottom: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .item {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+
+    width: calc((100% - 6 * 15px) / 3);
+    margin: 15px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .item {
+    width: calc((100% - 6 * 15px) / 3);
+  }
+}
