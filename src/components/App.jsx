@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import fetchImages from 'services/images-api';
 import Searchbar from 'components/Searchbar/Searchbar';
@@ -13,7 +13,7 @@ export class App extends Component {
     query: '',
     page: 1,
     imagesOnPage: 0,
-    totalImages: 0,
+    totalImage: 0,
     isLoading: false,
     showModal: false,
     images: null,
@@ -24,26 +24,35 @@ export class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { query, page } = this.state;
-
+    // console.log(this.state)
     if (prevState.query !== query) {
       this.setState(({ isLoading }) => ({ isLoading: !isLoading }));
 
       fetchImages(query)
         .then(({ hits, totalHits }) => {
-          const imagesArray = hits.map(
-            ({ id, tags, webformatURL, largeImageURL }) => ({
-              id: id,
-              description: tags,
-              smallImage: webformatURL,
-              largeImage: largeImageURL,
-            })
-          );
+
+          if(totalHits === 0) {
+            toast.warn('Sorry, there are no images matching your search query. Please try again.');
+            return;
+          }
+           
+          if (totalHits > 0) {
+            toast.info(`Hooray! We found ${totalHits} images.`);
+            
+          }
+
+          const gallery = hits.map( ({id, tags, webformatURL, largeImageURL })=> ({
+            id: id,
+            description: tags,
+            smallImage: webformatURL,
+            largeImage: largeImageURL,
+          }));
 
           return this.setState({
             page: 1,
-            images: imagesArray,
-            imagesOnPage: imagesArray.length,
-            totalImages: totalHits,
+            images: gallery,
+            imagesOnPage: gallery.length,
+            totalImage: totalHits,
           });
         })
         .catch(error => this.setState({ error }))
@@ -56,20 +65,25 @@ export class App extends Component {
       this.setState(({ isLoading }) => ({ isLoading: !isLoading }));
 
       fetchImages(query, page)
-        .then(({ hits }) => {
-          const imagesArray = hits.map(
-            ({ id, tags, webformatURL, largeImageURL }) => ({
-              id: id,
-              description: tags,
-              smallImage: webformatURL,
-              largeImage: largeImageURL,
-            })
-          );
+        .then(({ hits, totalHits }) => {
+
+
+          if (totalHits + 12 >= hits.length) {
+           toast.info(`We're sorry, but you've reached the end of search results.`);
+          }
+
+          console.log(hits)
+          const gallery = hits.map(({id, tags, webformatURL, largeImageURL })=> ({
+            id: id,
+            description: tags,
+            smallImage: webformatURL,
+            largeImage: largeImageURL,
+          }));
 
           return this.setState(({ images, imagesOnPage }) => {
             return {
-              images: [...images, ...imagesArray],
-              imagesOnPage: imagesOnPage + imagesArray.length,
+              images: [...images, ...gallery],
+              imagesOnPage: imagesOnPage + gallery.length,
             };
           });
         })
@@ -109,7 +123,7 @@ export class App extends Component {
     const {
       images,
       imagesOnPage,
-      totalImages,
+      totalImage,
       isLoading,
       showModal,
       currentImageUrl,
@@ -129,7 +143,7 @@ export class App extends Component {
 
         {isLoading && <Loader />}
 
-        {imagesOnPage >= 12 && imagesOnPage < totalImages && (
+        {imagesOnPage >= 12 && imagesOnPage < totalImage && (
           <Button onNextFetch={onNextFetch} />
         )}
 
@@ -141,7 +155,7 @@ export class App extends Component {
           />
         )}
 
-        <ToastContainer theme="colored" />
+        <ToastContainer theme="colored" autoClose={2500} />
       </>
     );
   }

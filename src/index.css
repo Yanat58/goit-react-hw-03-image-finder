@@ -11,7 +11,7 @@
   --backdrop-bg-color: rgba(43, 43, 43, 0.6);
 
   --hover-animation: 300ms cubic-bezier(0.17, 0.67, 0.83, 0.67);
-  --linear-gradient: linear-gradient(to bottom, #843c8d, #530a8f);
+  --linear-gradient: linear-gradient(to bottom, #843c8d, #43235d);
   --box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.75);
 }
 
