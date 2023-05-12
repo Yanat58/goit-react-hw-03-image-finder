@@ -15,7 +15,6 @@ export class App extends Component {
     totalHits: 0,
     isLoading: false,
     showModal: false,
-    snowBtn: 0,
     images: [],
     error: null,
     currentImageUrl: null,
