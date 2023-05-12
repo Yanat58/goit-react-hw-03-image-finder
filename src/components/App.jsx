@@ -57,7 +57,7 @@ export class App extends Component {
 
           this.setState(() => {
             return {
-              images: page === 1 ? gallery : [...images, ...gallery],
+              images: [...images, ...gallery],
               showBtn: page * 12 < totalHits,
             };
           });
@@ -69,8 +69,8 @@ export class App extends Component {
     }
   }
 
-  getSearchRequest = query => {
-    this.setState({ query, page: 1 });
+  getSearchRequest = (query, images) => {
+    this.setState({ query, page: 1, images: []});
   };
 
   onNextFetch = () => {
